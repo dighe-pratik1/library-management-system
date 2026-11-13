@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <!-- HEADER -->
+        <div class="card-header">
+            <h3>Return Book</h3>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">
+
+            <!-- WARNING -->
+            <div class="alert alert-warning">
+                <strong>Are you sure?</strong>
+                You are about to return this book.
+            </div>
+
+
+            <!-- BOOK / MEMBER DETAILS -->
+            <table class="table table-bordered">
+
+                <tr>
+                    <th style="width: 30%;">Member</th>
+                    <td>
+                        {{ issue.member.first_name }}
+                        {{ issue.member.last_name }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Member Code</th>
+                    <td>
+                        {{ issue.member.member_code }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Book</th>
+                    <td>
+                        <strong>
+                            {{ issue.book_copy.book.title }}
+                        </strong>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Accession Number</th>
+                    <td>
+                        {{ issue.book_copy.accession_number }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Barcode</th>
+                    <td>
+                        {{ issue.book_copy.barcode }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Issue Date</th>
+                    <td>
+                        {{ issue.issue_date|date:"d-m-Y" }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Due Date</th>
+                    <td>
+                        {{ issue.due_date|date:"d-m-Y" }}
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Current Status</th>
+                    <td>
+
+                        {% if issue.status == "ISSUED" %}
+
+                            <span class="badge bg-primary">
+                                Issued
+                            </span>
+
+                        {% elif issue.status == "OVERDUE" %}
+
+                            <span class="badge bg-danger">
+                                Overdue
+                            </span>
+
+                        {% elif issue.status == "RETURNED" %}
+
+                            <span class="badge bg-success">
+                                Returned
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ issue.get_status_display }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+
+                {% if issue.fine_amount %}
+
+                <tr>
+                    <th>Current Fine</th>
+                    <td>
+
+                        <span class="text-danger fw-bold">
+                            ₹{{ issue.fine_amount }}
+                        </span>
+
+                    </td>
+                </tr>
+
+                {% endif %}
+
+            </table>
+
+
+            <!-- RETURN FORM -->
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- RETURN DATE -->
+                <div class="mb-3">
+
+                    <label for="return_date"
+                           class="form-label">
+
+                        <strong>Return Date</strong>
+
+                    </label>
+
+                    <input
+                        type="date"
+                        id="return_date"
+                        name="return_date"
+                        class="form-control"
+                        value="{{ today|date:'Y-m-d' }}"
+                        required
+                    >
+
+                    <small class="text-muted">
+                        Select the date on which the book is being returned.
+                    </small>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+                <div class="mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+
+                        Confirm Return
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'issue_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

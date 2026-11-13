@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Edit Fine</h2>
+
+    <p class="text-muted">
+        Update fine information
+    </p>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- MEMBER -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Member
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        value="{{ fine.member.first_name }} {{ fine.member.last_name }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- BOOK -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Book
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+
+                        {% if fine.issue_record %}
+
+                        value="{{ fine.issue_record.book_copy.book.title }}"
+
+                        {% endif %}
+
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- AMOUNT -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Fine Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        step="0.01"
+                        min="{{ fine.paid_amount }}"
+                        value="{{ fine.amount }}"
+                        required
+                    >
+
+                    <small class="text-muted">
+
+                        Already paid:
+                        ₹{{ fine.paid_amount }}
+
+                    </small>
+
+                </div>
+
+
+                <!-- REASON -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Reason
+                    </label>
+
+                    <input
+                        type="text"
+                        name="reason"
+                        class="form-control"
+                        value="{{ fine.reason }}"
+                    >
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4">{{ fine.notes }}</textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Update Fine
+
+                </button>
+
+
+                <a
+                    href="{% url 'fine_detail' fine.pk %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

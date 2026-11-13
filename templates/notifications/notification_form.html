@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Add Notification</h2>
+
+            <p class="text-muted">
+                Send a notification to a library member
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'notification_list' %}"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- MEMBER -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Member
+                    </label>
+
+                    <select
+                        name="member"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            Select Member
+                        </option>
+
+
+                        {% for member in members %}
+
+                        <option value="{{ member.id }}">
+
+                            {{ member.first_name }}
+                            {{ member.last_name }}
+
+                            -
+                            {{ member.member_code }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        placeholder="Notification title"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Message
+                    </label>
+
+                    <textarea
+                        name="message"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Enter notification message"
+                        required></textarea>
+
+                </div>
+
+
+                <!-- TYPE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notification Type
+                    </label>
+
+                    <select
+                        name="notification_type"
+                        class="form-select">
+
+                        {% for value, label in notification_types %}
+
+                        <option value="{{ value }}">
+
+                            {{ label }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Priority
+                    </label>
+
+                    <select
+                        name="priority"
+                        class="form-select">
+
+                        {% for value, label in priorities %}
+
+                        <option value="{{ value }}">
+
+                            {{ label }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    Create Notification
+
+                </button>
+
+
+                <a
+                    href="{% url 'notification_list' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

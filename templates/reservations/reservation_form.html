@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+
+        <h2>New Reservation</h2>
+
+        <p class="text-muted">
+            Reserve a book for a library member.
+        </p>
+
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- MEMBER -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Member
+                    </label>
+
+                    <select
+                        name="member"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            -- Select Member --
+                        </option>
+
+                        {% for member in members %}
+
+                            <option value="{{ member.id }}">
+
+                                {{ member.member_code }}
+                                -
+                                {{ member.first_name }}
+                                {{ member.last_name }}
+
+                                (Max Books:
+                                {{ member.membership_type.max_books }})
+
+                            </option>
+
+                        {% empty %}
+
+                            <option disabled>
+                                No active members available
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- BOOK -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Book
+                    </label>
+
+                    <select
+                        name="book"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            -- Select Book --
+                        </option>
+
+                        {% for book in books %}
+
+                            <option value="{{ book.id }}">
+
+                                {{ book.title }}
+
+                                -
+                                ISBN:
+                                {{ book.isbn }}
+
+                            </option>
+
+                        {% empty %}
+
+                            <option disabled>
+                                No active books available
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Reservation Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="reservation_date"
+                        value="{{ today|date:'Y-m-d' }}"
+                        class="form-control"
+                        required>
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Optional notes"></textarea>
+
+                </div>
+
+
+                <!-- INFO -->
+
+                <div class="alert alert-info">
+
+                    <strong>How it works:</strong>
+
+                    <ul class="mb-0 mt-2">
+
+                        <li>
+                            If a copy is available, the reservation becomes
+                            <strong>READY</strong>.
+                        </li>
+
+                        <li>
+                            If no copy is available, the reservation becomes
+                            <strong>PENDING</strong>.
+                        </li>
+
+                        <li>
+                            A READY reservation can be issued directly to the member.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Create Reservation
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'reservation_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

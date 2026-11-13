@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Delete Membership Type | LibraPro{% endblock %}
+{% block content %}<div class="content-card"><h1 class="page-title">Delete Membership Type</h1><p>Are you sure you want to delete <strong>{{ membership_type.name }}</strong>?</p><p class="text-danger">If members currently use this type, deletion will be prevented.</p><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Confirm Delete</button> <a class="btn btn-outline-secondary" href="{% url 'membership_type_list' %}">Cancel</a></form></div>{% endblock %}

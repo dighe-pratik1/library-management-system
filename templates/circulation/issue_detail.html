@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Issue Details</h2>
+
+            <p class="text-muted">
+                View complete issue and return information.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'issue_list' %}"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+
+    <!-- MEMBER DETAILS -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <strong>Member Details</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Member Code</strong>
+
+                    <p>
+                        {{ issue.member.member_code }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Member Name</strong>
+
+                    <p>
+                        {{ issue.member.first_name }}
+                        {{ issue.member.last_name }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Membership Type</strong>
+
+                    <p>
+                        {{ issue.member.membership_type.name }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Mobile</strong>
+
+                    <p>
+                        {{ issue.member.mobile|default:"-" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOK DETAILS -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <strong>Book Details</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Book Title</strong>
+
+                    <p>
+                        {{ issue.book_copy.book.title }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Accession Number</strong>
+
+                    <p>
+                        {{ issue.book_copy.accession_number }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Barcode</strong>
+
+                    <p>
+                        {{ issue.book_copy.barcode|default:"-" }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Book Copy Status</strong>
+
+                    <p>
+                        {{ issue.book_copy.status }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ISSUE DETAILS -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <strong>Issue / Return Details</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Issue Date</strong>
+
+                    <p>
+                        {{ issue.issue_date }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Due Date</strong>
+
+                    <p>
+                        {{ issue.due_date }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Return Date</strong>
+
+                    <p>
+                        {{ issue.return_date|default:"Not Returned" }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Status</strong>
+
+                    <p>
+
+                        {% if issue.status == "ISSUED" %}
+
+                            <span class="badge bg-primary">
+                                Issued
+                            </span>
+
+                        {% elif issue.status == "RETURNED" %}
+
+                            <span class="badge bg-success">
+                                Returned
+                            </span>
+
+                        {% elif issue.status == "OVERDUE" %}
+
+                            <span class="badge bg-warning">
+                                Overdue
+                            </span>
+
+                        {% elif issue.status == "LOST" %}
+
+                            <span class="badge bg-danger">
+                                Lost
+                            </span>
+
+                        {% else %}
+
+                            {{ issue.status }}
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Fine Amount</strong>
+
+                    <p>
+                        ₹{{ issue.fine_amount }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <strong>Fine Per Day</strong>
+
+                    <p>
+                        ₹{{ issue.member.membership_type.fine_per_day }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NOTES -->
+
+    {% if issue.notes %}
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <strong>Notes</strong>
+        </div>
+
+        <div class="card-body">
+
+            {{ issue.notes }}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ACTION -->
+
+    {% if issue.status == "ISSUED" %}
+
+    <div class="text-end">
+
+        <a
+            href="{% url 'return_book' issue.pk %}"
+            class="btn btn-success">
+
+            Return Book
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

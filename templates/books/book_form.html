@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <!-- HEADER -->
+        <div class="card-header">
+            <h3>
+                {% if book %}
+                    Edit Book
+                {% else %}
+                    Add Book
+                {% endif %}
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <!-- BOOK TITLE -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        Book Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        value="{{ book.title|default:'' }}"
+                        placeholder="Enter book title"
+                        required
+                    >
+                </div>
+
+
+                <!-- ISBN -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        ISBN
+                    </label>
+
+                    {% if book %}
+
+                        <!-- EDIT BOOK -->
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ book.isbn }}"
+                            readonly
+                        >
+
+                        <small class="text-muted">
+                            ISBN is automatically generated
+                            and cannot be changed.
+                        </small>
+
+                    {% else %}
+
+                        <!-- ADD BOOK -->
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="Automatically Generated"
+                            readonly
+                        >
+
+                        <small class="text-muted">
+                            ISBN will be generated automatically
+                            when the book is added.
+                        </small>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- AUTHOR -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Author
+                    </label>
+
+                    <select
+                        name="author"
+                        class="form-control"
+                        required
+                    >
+
+                        <option value="">
+                            -- Select Author --
+                        </option>
+
+                        {% for author in authors %}
+
+                            <option
+                                value="{{ author.id }}"
+                                {% if book and book.author_id == author.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ author.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PUBLISHER -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Publisher
+                    </label>
+
+                    <select
+                        name="publisher"
+                        class="form-control"
+                        required
+                    >
+
+                        <option value="">
+                            -- Select Publisher --
+                        </option>
+
+                        {% for publisher in publishers %}
+
+                            <option
+                                value="{{ publisher.id }}"
+                                {% if book and book.publisher_id == publisher.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ publisher.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <select
+                        name="category"
+                        class="form-control"
+                        required
+                    >
+
+                        <option value="">
+                            -- Select Category --
+                        </option>
+
+                        {% for category in categories %}
+
+                            <option
+                                value="{{ category.id }}"
+                                {% if book and book.category_id == category.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ category.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Enter book description"
+                    >{{ book.description|default:'' }}</textarea>
+
+                </div>
+
+
+                <!-- EDITION -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Edition
+                    </label>
+
+                    <input
+                        type="text"
+                        name="edition"
+                        class="form-control"
+                        value="{{ book.edition|default:'' }}"
+                        placeholder="Example: 2nd Edition"
+                    >
+
+                </div>
+
+
+                <!-- PUBLICATION YEAR -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Publication Year
+                    </label>
+
+                    <input
+                        type="number"
+                        name="publication_year"
+                        class="form-control"
+                        value="{{ book.publication_year|default:'' }}"
+                        placeholder="Example: 2025"
+                    >
+
+                </div>
+
+
+                <!-- LANGUAGE -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Language
+                    </label>
+
+                    <input
+                        type="text"
+                        name="language"
+                        class="form-control"
+                        value="{{ book.language|default:'English' }}"
+                        placeholder="Example: English"
+                    >
+
+                </div>
+
+
+                <!-- PAGES -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Pages
+                    </label>
+
+                    <input
+                        type="number"
+                        name="pages"
+                        class="form-control"
+                        value="{{ book.pages|default:'' }}"
+                        placeholder="Number of pages"
+                    >
+
+                </div>
+
+
+                <!-- PRICE -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        class="form-control"
+                        value="{{ book.price|default:'' }}"
+                        placeholder="Enter book price"
+                    >
+
+                </div>
+
+
+                <!-- COVER IMAGE -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Cover Image
+                    </label>
+
+                    <input
+                        type="file"
+                        name="cover_image"
+                        class="form-control"
+                        accept="image/*"
+                    >
+
+                    {% if book and book.cover_image %}
+
+                        <div class="mt-2">
+
+                            <p class="mb-1">
+                                Current Cover:
+                            </p>
+
+                            <img
+                                src="{{ book.cover_image.url }}"
+                                alt="{{ book.title }}"
+                                width="100"
+                                height="130"
+                                style="object-fit: cover;"
+                            >
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-control"
+                    >
+
+                        <option
+                            value="ACTIVE"
+                            {% if not book or book.status %}
+                                selected
+                            {% endif %}
+                        >
+                            Active
+                        </option>
+
+                        <option
+                            value="INACTIVE"
+                            {% if book and not book.status %}
+                                selected
+                            {% endif %}
+                        >
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    {% if book %}
+                        Update Book
+                    {% else %}
+                        Add Book
+                    {% endif %}
+                </button>
+
+
+                <a
+                    href="{% url 'book_list' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

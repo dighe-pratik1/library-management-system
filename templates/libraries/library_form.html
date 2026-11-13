@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{% if library %}Edit{% else %}Add{% endif %} Library | LibraPro{% endblock %}
+{% block content %}
+<div class="mb-4"><h1 class="page-title">{% if library %}Edit Library{% else %}Add Library{% endif %}</h1><p class="page-subtitle">Library code is generated automatically for new records.</p></div>
+<div class="content-card"><form method="post" enctype="multipart/form-data">{% csrf_token %}<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Library name *</label><input class="form-control" name="name" required maxlength="150" value="{{ library.name|default:'' }}"></div>
+<div class="col-md-6"><label class="form-label">Email</label><input class="form-control" type="email" name="email" value="{{ library.email|default:'' }}"></div>
+<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="2">{{ library.description|default:'' }}</textarea></div>
+<div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2">{{ library.address|default:'' }}</textarea></div>
+<div class="col-md-4"><label class="form-label">City</label><input class="form-control" name="city" value="{{ library.city|default:'' }}"></div><div class="col-md-4"><label class="form-label">State</label><input class="form-control" name="state" value="{{ library.state|default:'' }}"></div><div class="col-md-4"><label class="form-label">Country</label><input class="form-control" name="country" value="{{ library.country|default:'India' }}"></div>
+<div class="col-md-4"><label class="form-label">PIN code</label><input class="form-control" name="pincode" maxlength="10" value="{{ library.pincode|default:'' }}"></div><div class="col-md-4"><label class="form-label">Phone</label><input class="form-control" name="phone" value="{{ library.phone|default:'' }}"></div><div class="col-md-4"><label class="form-label">Logo</label><input class="form-control" type="file" name="logo" accept="image/*"></div>
+<div class="col-md-6"><label class="form-label">Status</label><select class="form-select" name="status"><option value="1" {% if not library or library.status %}selected{% endif %}>Active</option><option value="0" {% if library and not library.status %}selected{% endif %}>Inactive</option></select></div>
+</div><div class="mt-4 d-flex gap-2"><button class="btn btn-primary" type="submit">Save Library</button><a class="btn btn-outline-secondary" href="{% url 'library_list' %}">Cancel</a></div></form></div>
+{% endblock %}

@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Delete Library | LibraPro{% endblock %}
+{% block content %}<div class="content-card"><h1 class="page-title">Delete Library</h1><p>Are you sure you want to delete <strong>{{ library.name }}</strong> ({{ library.code }})?</p><p class="text-danger">Deletion may be blocked if related records depend on this library.</p><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Confirm Delete</button> <a class="btn btn-outline-secondary" href="{% url 'library_list' %}">Cancel</a></form></div>{% endblock %}

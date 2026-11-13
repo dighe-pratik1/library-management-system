@@ -1,0 +1,1410 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    .report-container {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .report-header {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        color: white;
+        padding: 28px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+    }
+
+    .report-header h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .report-header p {
+        margin-top: 8px;
+        opacity: 0.85;
+    }
+
+    .action-buttons {
+        margin-top: 20px;
+    }
+
+    .btn-report {
+        border: none;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-right: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .btn-print {
+        background: white;
+        color: #1e293b;
+    }
+
+    .btn-refresh {
+        background: rgba(255,255,255,0.15);
+        color: white;
+    }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 22px;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        border-left: 5px solid #334155;
+        transition: 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+    }
+
+    .stat-title {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .stat-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .section {
+        background: white;
+        padding: 22px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+        margin: 0;
+        font-size: 21px;
+        color: #1e293b;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    th {
+        background: #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        padding: 13px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 13px;
+    }
+
+    tr:hover td {
+        background: #f8fafc;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-gray {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .filter-box {
+        background: #f8fafc;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 10px;
+        align-items: end;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+    }
+
+    .filter-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+
+    .filter-button {
+        background: #334155;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        height: 40px;
+    }
+
+    .money-box {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 15px;
+    }
+
+    .money-card {
+        padding: 20px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .money-label {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .money-value {
+        font-size: 25px;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+    }
+
+    .report-footer {
+        text-align: center;
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 30px;
+        padding: 20px;
+    }
+
+    @media(max-width: 800px) {
+
+        .filter-row {
+            grid-template-columns: 1fr;
+        }
+
+        .report-container {
+            padding: 12px;
+        }
+    }
+
+    @media print {
+
+        body {
+            background: white !important;
+        }
+
+        .sidebar,
+        .navbar,
+        nav,
+        header {
+            display: none !important;
+        }
+
+        .report-container {
+            padding: 0;
+            background: white;
+        }
+
+        .report-header {
+            color: black;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: none;
+        }
+
+        .action-buttons,
+        .filter-box {
+            display: none !important;
+        }
+
+        .stat-card,
+        .section {
+            box-shadow: none;
+            break-inside: avoid;
+        }
+
+        table {
+            font-size: 10px;
+        }
+
+        .section {
+            border: 1px solid #ddd;
+        }
+
+        .print-only {
+            display: block !important;
+        }
+    }
+
+    .print-only {
+        display: none;
+    }
+
+</style>
+
+
+<div class="report-container">
+
+    <!-- HEADER -->
+
+    <div class="report-header">
+
+        <h1>📊 Library Management Reports</h1>
+
+        <p>
+            Complete library statistics, student records,
+            issue records, inventory, fines and payments.
+        </p>
+
+        <div class="action-buttons">
+
+            <button
+                onclick="window.print()"
+                class="btn-report btn-print">
+                🖨️ Print Report
+            </button>
+
+            <button
+                onclick="location.reload()"
+                class="btn-report btn-refresh">
+                🔄 Refresh
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="print-only">
+
+        <h2>Library Management System</h2>
+
+        <p>
+            Report generated on:
+            {% now "d M Y, h:i A" %}
+        </p>
+
+    </div>
+
+
+    <!-- MAIN STATISTICS -->
+
+    <div class="stat-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-title">Total Books</div>
+            <div class="stat-value">
+                {{ total_books }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-title">Total Book Copies</div>
+            <div class="stat-value">
+                {{ total_copies }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-title">Available Books</div>
+            <div class="stat-value">
+                {{ available_books }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-title">Issued Books</div>
+            <div class="stat-value">
+                {{ issued_books }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-title">Overdue Books</div>
+            <div class="stat-value">
+                {{ overdue_books }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🎓</div>
+            <div class="stat-title">Total Students</div>
+            <div class="stat-value">
+                {{ total_students }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">🔖</div>
+            <div class="stat-title">Reserved Books</div>
+            <div class="stat-value">
+                {{ reserved_books }}
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">❌</div>
+            <div class="stat-title">Lost Books</div>
+            <div class="stat-value">
+                {{ lost_books }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- FINANCIAL REPORT -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>💰 Financial Summary</h2>
+
+        </div>
+
+        <div class="money-box">
+
+            <div class="money-card">
+                <div class="money-label">
+                    Total Book Price
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_book_price|floatformat:2 }}
+                </div>
+            </div>
+
+
+            <div class="money-card">
+                <div class="money-label">
+                    Total Purchase / Inventory Value
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_purchase_value|floatformat:2 }}
+                </div>
+            </div>
+
+
+            <div class="money-card">
+                <div class="money-label">
+                    Total Fine
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_fine|floatformat:2 }}
+                </div>
+            </div>
+
+
+            <div class="money-card">
+                <div class="money-label">
+                    Fine Collected
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_fine_collected|floatformat:2 }}
+                </div>
+            </div>
+
+
+            <div class="money-card">
+                <div class="money-label">
+                    Fine Due / Outstanding
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_fine_due|floatformat:2 }}
+                </div>
+            </div>
+
+
+            <div class="money-card">
+                <div class="money-label">
+                    Successful Payment Collection
+                </div>
+
+                <div class="money-value">
+                    ₹{{ total_payment_collection|floatformat:2 }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ISSUE SUMMARY -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>📖 Issue & Return Summary</h2>
+
+        </div>
+
+        <div class="stat-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Total Issue Records
+                </div>
+
+                <div class="stat-value">
+                    {{ total_issue_records }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Currently Issued
+                </div>
+
+                <div class="stat-value">
+                    {{ currently_issued }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Returned
+                </div>
+
+                <div class="stat-value">
+                    {{ returned_books }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Overdue
+                </div>
+
+                <div class="stat-value">
+                    {{ overdue_books }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOK INVENTORY -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>📚 Book Inventory Report</h2>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Book</th>
+                        <th>Author</th>
+                        <th>Publisher</th>
+                        <th>Category</th>
+                        <th>Total Copies</th>
+                        <th>Available</th>
+                        <th>Issued</th>
+                        <th>Price</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for book in book_inventory %}
+
+                    <tr>
+
+                        <td>{{ forloop.counter }}</td>
+
+                        <td>
+                            <strong>
+                                {{ book.title }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ book.author.name }}
+                        </td>
+
+                        <td>
+                            {{ book.publisher.name }}
+                        </td>
+
+                        <td>
+                            {{ book.category.name }}
+                        </td>
+
+                        <td>
+                            {{ book.copy_count }}
+                        </td>
+
+                        <td>
+                            <span class="badge badge-success">
+                                {{ book.available_count }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge badge-warning">
+                                {{ book.issued_count }}
+                            </span>
+                        </td>
+
+                        <td>
+                            ₹{{ book.price|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="empty">
+                            No books found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDENT SEARCH -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>👨‍🎓 Student Records</h2>
+
+        </div>
+
+
+        <form method="get" class="filter-box">
+
+            <div class="filter-row">
+
+                <div class="filter-group">
+
+                    <label>
+                        Search Student
+                    </label>
+
+                    <input
+                        type="text"
+                        name="student"
+                        value="{{ student_query }}"
+                        placeholder="Name / Member Code / Email / Mobile">
+
+                </div>
+
+                <div></div>
+                <div></div>
+
+                <button
+                    type="submit"
+                    class="filter-button">
+                    🔎 Search
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Member Code</th>
+                        <th>Student Name</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Year</th>
+                        <th>Membership</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ student.member_code }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ student.first_name }}
+                            {{ student.last_name }}
+                        </td>
+
+                        <td>
+                            {{ student.mobile }}
+                        </td>
+
+                        <td>
+                            {{ student.email }}
+                        </td>
+
+                        <td>
+                            {{ student.course }}
+                        </td>
+
+                        <td>
+                            {{ student.year }}
+                        </td>
+
+                        <td>
+                            {{ student.membership_type.name }}
+                        </td>
+
+                        <td>
+
+                            {% if student.status %}
+
+                                <span class="badge badge-success">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-danger">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="empty">
+                            No student records found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ISSUE RECORDS -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>📕 Book Issue / Return Records</h2>
+
+        </div>
+
+
+        <form method="get" class="filter-box">
+
+            <div class="filter-row">
+
+                <div class="filter-group">
+
+                    <label>
+                        Search
+                    </label>
+
+                    <input
+                        type="text"
+                        name="issue"
+                        value="{{ issue_query }}"
+                        placeholder="Student / Book / Accession / Barcode">
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        From Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="date_from"
+                        value="{{ date_from }}">
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        To Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="date_to"
+                        value="{{ date_to }}">
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="filter-button">
+                    🔎 Filter
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Member Code</th>
+                        <th>Book</th>
+                        <th>Accession</th>
+                        <th>Barcode</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for issue in issue_records %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+
+                            {{ issue.member.first_name }}
+                            {{ issue.member.last_name }}
+
+                        </td>
+
+                        <td>
+                            {{ issue.member.member_code }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ issue.book_copy.book.title }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ issue.book_copy.accession_number }}
+                        </td>
+
+                        <td>
+                            {{ issue.book_copy.barcode }}
+                        </td>
+
+                        <td>
+                            {{ issue.issue_date|date:"d-m-Y" }}
+                        </td>
+
+                        <td>
+
+                            {% if issue.due_date %}
+                                {{ issue.due_date|date:"d-m-Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if issue.return_date %}
+                                {{ issue.return_date|date:"d-m-Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if issue.status == "ISSUED" %}
+
+                                <span class="badge badge-warning">
+                                    Issued
+                                </span>
+
+                            {% elif issue.status == "RETURNED" %}
+
+                                <span class="badge badge-success">
+                                    Returned
+                                </span>
+
+                            {% elif issue.status == "OVERDUE" %}
+
+                                <span class="badge badge-danger">
+                                    Overdue
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-danger">
+                                    {{ issue.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            ₹{{ issue.fine_amount|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="11" class="empty">
+                            No issue records found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- FINE RECORDS -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>💸 Fine Records</h2>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Book</th>
+                        <th>Fine Date</th>
+                        <th>Amount</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for fine in fine_records %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ fine.member.first_name }}
+                            {{ fine.member.last_name }}
+                        </td>
+
+                        <td>
+
+                            {% if fine.issue_record %}
+
+                                {{ fine.issue_record.book_copy.book.title }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ fine.fine_date|date:"d-m-Y" }}
+                        </td>
+
+                        <td>
+                            ₹{{ fine.amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            ₹{{ fine.paid_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            ₹{{ fine.balance|floatformat:2 }}
+                        </td>
+
+                        <td>
+
+                            {% if fine.status == "PAID" %}
+
+                                <span class="badge badge-success">
+                                    Paid
+                                </span>
+
+                            {% elif fine.status == "PARTIAL" %}
+
+                                <span class="badge badge-warning">
+                                    Partial
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-danger">
+                                    Unpaid
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ fine.reason }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="empty">
+                            No fine records found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- PAYMENT RECORDS -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>💳 Payment Records</h2>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Book</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Transaction ID</th>
+                        <th>Status</th>
+                        <th>Payment Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for payment in payment_records %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ payment.member.first_name }}
+                            {{ payment.member.last_name }}
+                        </td>
+
+                        <td>
+
+                            {% if payment.fine.issue_record %}
+
+                                {{ payment.fine.issue_record.book_copy.book.title }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            ₹{{ payment.amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ payment.method }}
+                        </td>
+
+                        <td>
+                            {{ payment.transaction_id|default:"-" }}
+                        </td>
+
+                        <td>
+
+                            {% if payment.status == "SUCCESS" %}
+
+                                <span class="badge badge-success">
+                                    Success
+                                </span>
+
+                            {% elif payment.status == "PENDING" %}
+
+                                <span class="badge badge-warning">
+                                    Pending
+                                </span>
+
+                            {% elif payment.status == "FAILED" %}
+
+                                <span class="badge badge-danger">
+                                    Failed
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-gray">
+                                    {{ payment.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ payment.payment_date|date:"d-m-Y" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8" class="empty">
+                            No payment records found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT ISSUE RECORDS -->
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <h2>🕐 Recent Issued Books</h2>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Book</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for issue in recent_issues %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ issue.member.first_name }}
+                            {{ issue.member.last_name }}
+                        </td>
+
+                        <td>
+                            {{ issue.book_copy.book.title }}
+                        </td>
+
+                        <td>
+                            {{ issue.issue_date|date:"d-m-Y" }}
+                        </td>
+
+                        <td>
+
+                            {% if issue.due_date %}
+                                {{ issue.due_date|date:"d-m-Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if issue.status == "ISSUED" %}
+
+                                <span class="badge badge-warning">
+                                    Issued
+                                </span>
+
+                            {% elif issue.status == "RETURNED" %}
+
+                                <span class="badge badge-success">
+                                    Returned
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-danger">
+                                    {{ issue.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="empty">
+                            No issue records.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="report-footer">
+
+        Library Management System
+        <br>
+
+        Generated:
+        {% now "d M Y, h:i A" %}
+
+    </div>
+
+</div>
+
+
+{% endblock %}

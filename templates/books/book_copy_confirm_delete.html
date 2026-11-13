@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+
+            <div class="card shadow-sm">
+
+
+                <div class="card-body text-center p-5">
+
+
+                    <div
+                        style="
+                            font-size:55px;
+                            margin-bottom:15px;
+                        ">
+
+                        ⚠️
+
+                    </div>
+
+
+                    <h3 class="fw-bold mb-3">
+                        Delete Book Copy?
+                    </h3>
+
+
+                    <p class="text-muted">
+
+                        Are you sure you want to delete this
+                        book copy?
+
+                    </p>
+
+
+                    <!-- COPY INFORMATION -->
+
+                    <div
+                        class="alert alert-light border text-start mt-4">
+
+
+                        <p class="mb-2">
+
+                            <strong>
+                                Book:
+                            </strong>
+
+                            {{ copy.book.title }}
+
+                        </p>
+
+
+                        <p class="mb-2">
+
+                            <strong>
+                                Accession Number:
+                            </strong>
+
+                            {{ copy.accession_number }}
+
+                        </p>
+
+
+                        <p class="mb-0">
+
+                            <strong>
+                                Barcode:
+                            </strong>
+
+                            {{ copy.barcode|default:"-" }}
+
+                        </p>
+
+
+                    </div>
+
+
+                    <!-- DELETE FORM -->
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger me-2">
+
+                            Yes, Delete
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'book_copy_list' %}"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+
+                    </form>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .card {
+        border-radius: 12px;
+    }
+
+
+    .btn {
+        border-radius: 6px;
+        padding: 9px 18px;
+    }
+
+</style>
+
+{% endblock %}

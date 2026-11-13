@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+
+    <div class="mb-4">
+
+        <h2>Issue Book</h2>
+
+        <p class="text-muted">
+            Issue an available book copy to a library member.
+        </p>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- FORM -->
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- MEMBER -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Member
+                    </label>
+
+                    <select
+                        name="member"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            -- Select Member --
+                        </option>
+
+                        {% for member in members %}
+
+                            <option value="{{ member.id }}">
+
+                                {{ member.member_code }}
+                                -
+                                {{ member.first_name }}
+                                {{ member.last_name }}
+
+                                (Max Books:
+                                {{ member.membership_type.max_books }})
+
+                            </option>
+
+                        {% empty %}
+
+                            <option disabled>
+                                No active members available
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- AVAILABLE BOOK COPY -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Book
+                    </label>
+
+                    <select
+                        name="book_copy"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            -- Select Available Book --
+                        </option>
+
+                        {% for copy in copies %}
+
+                            <option value="{{ copy.id }}">
+
+                                {{ copy.book.title }}
+
+                                -
+                                Accession:
+                                {{ copy.accession_number }}
+
+                                -
+                                Barcode:
+                                {{ copy.barcode }}
+
+                            </option>
+
+                        {% empty %}
+
+                            <option disabled>
+                                No available book copies
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    {% if not copies %}
+
+                        <div class="text-danger mt-2">
+
+                            <small>
+                                No available book copies found.
+                                Please add a Book Copy first.
+
+                            </small>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ISSUE DATE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Issue Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="issue_date"
+                        value="{{ today|date:'Y-m-d' }}"
+                        class="form-control"
+                        required>
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Optional notes"></textarea>
+
+                </div>
+
+
+                <!-- INFORMATION -->
+
+                <div class="alert alert-info">
+
+                    <strong>Note:</strong>
+
+                    The due date will be calculated automatically
+                    according to the member's membership type.
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        {% if not copies %}disabled{% endif %}>
+
+                        Issue Book
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'issue_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

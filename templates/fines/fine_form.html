@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Add Fine</h2>
+
+    <p class="text-muted">
+        Create a new library fine
+    </p>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- ISSUE RECORD -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Issue Record
+                    </label>
+
+                    <select
+                        name="issue_record"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            Select Issue Record
+                        </option>
+
+                        {% for issue in issues %}
+
+                        <option value="{{ issue.id }}">
+
+                            {{ issue.member.first_name }}
+                            {{ issue.member.last_name }}
+
+                            -
+
+                            {{ issue.book_copy.book.title }}
+
+                            -
+
+                            {{ issue.book_copy.accession_number }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- AMOUNT -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Fine Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        step="0.01"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- REASON -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Reason
+                    </label>
+
+                    <input
+                        type="text"
+                        name="reason"
+                        class="form-control"
+                        value="Late return"
+                    >
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4"></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Add Fine
+
+                </button>
+
+
+                <a
+                    href="{% url 'fine_list' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

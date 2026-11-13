@@ -1,0 +1,9 @@
+LibraPro integration audit
+
+Checks completed in this environment:
+- All project Python files parse successfully.
+- All statically referenced render() template names exist.
+- All unnamespaced {% url %} names found in templates match declared URL names.
+- POST forms checked for CSRF tokens; no missing tokens found.
+
+Not runtime-verified here: Django system checks, migrations against an existing database, and test suite. Run `python manage.py check`, `python manage.py makemigrations --check`, `python manage.py migrate`, and `python manage.py test` in the Windows virtual environment.

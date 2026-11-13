@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Membership Types</h2>
+            <p class="text-muted">
+                Manage library membership types
+            </p>
+        </div>
+
+        <a href="{% url 'membership_type_add' %}"
+           class="btn btn-primary">
+            + Add Membership Type
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <form method="GET"
+                  class="d-flex gap-2">
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query }}"
+                    class="form-control"
+                    placeholder="Search membership type..."
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-secondary">
+                    Search
+                </button>
+
+                {% if query %}
+                    <a href="{% url 'membership_type_list' %}"
+                       class="btn btn-outline-secondary">
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Max Books</th>
+                            <th>Loan Days</th>
+                            <th>Renewal Limit</th>
+                            <th>Fine / Day</th>
+                            <th>Membership Fee</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for membership_type in membership_types %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ membership_type.name }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ membership_type.description|default:"-" }}
+                            </td>
+
+                            <td>
+                                {{ membership_type.max_books }}
+                            </td>
+
+                            <td>
+                                {{ membership_type.loan_days }}
+                            </td>
+
+                            <td>
+                                {{ membership_type.renewal_limit }}
+                            </td>
+
+                            <td>
+                                ₹{{ membership_type.fine_per_day }}
+                            </td>
+
+                            <td>
+                                ₹{{ membership_type.membership_fee }}
+                            </td>
+
+                            <td>
+
+                                {% if membership_type.status %}
+
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'membership_type_edit' membership_type.pk %}"
+                                    class="btn btn-sm btn-warning">
+                                    Edit
+                                </a>
+
+                                <a
+                                    href="{% url 'membership_type_delete' membership_type.pk %}"
+                                    class="btn btn-sm btn-danger">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="10"
+                                class="text-center text-muted py-4">
+
+                                No Membership Types Found.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold">
+
+            {% if copy %}
+                Edit Book Copy
+            {% else %}
+                Add Book Copy
+            {% endif %}
+
+        </h2>
+
+        <p class="text-muted">
+            Manage physical book copy information
+        </p>
+
+    </div>
+
+
+    <!-- FORM CARD -->
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- BOOK -->
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Book
+                    </label>
+
+                    <select
+                        name="book"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            -- Select Book --
+                        </option>
+
+                        {% for book in books %}
+
+                            <option
+                                value="{{ book.pk }}"
+
+                                {% if copy and copy.book_id == book.pk %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ book.title }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- AUTOMATIC ACCESSION + BARCODE -->
+
+                {% if copy %}
+
+                    <!-- EDIT MODE -->
+
+                    <div class="row">
+
+                        <!-- ACCESSION NUMBER -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Accession Number
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ copy.accession_number }}"
+                                readonly>
+
+                            <small class="text-muted">
+                                Automatically generated and cannot be changed.
+                            </small>
+
+                        </div>
+
+
+                        <!-- BARCODE -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Barcode
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ copy.barcode }}"
+                                readonly>
+
+                            <small class="text-muted">
+                                Automatically generated and cannot be changed.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- ADD MODE -->
+
+                    <div class="alert alert-info">
+
+                        <strong>
+                            Automatic Generation
+                        </strong>
+
+                        <br>
+
+                        Accession Number and Barcode will be
+                        generated automatically.
+
+                        <br><br>
+
+                        <strong>Example:</strong>
+
+                        <br>
+
+                        Accession Number:
+                        <code>ACC-0001</code>
+
+                        <br>
+
+                        Barcode:
+                        <code>LIB000000001</code>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Number of Copies
+                        </label>
+
+                        <input
+                            type="number"
+                            name="quantity"
+                            class="form-control"
+                            value="1"
+                            min="1"
+                            max="1000"
+                            required>
+
+                        <small class="text-muted">
+                            Enter how many copies you want to add.
+                            Maximum 1000 copies at one time.
+                        </small>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- STATUS -->
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select"
+                        required>
+
+                        {% for value, label in status_choices %}
+
+                            <option
+                                value="{{ value }}"
+
+                                {% if copy and copy.status == value %}
+                                    selected
+
+                                {% elif not copy and value == "AVAILABLE" %}
+                                    selected
+
+                                {% endif %}
+                            >
+
+                                {{ label }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- SHELF + RACK -->
+
+                <div class="row">
+
+                    <!-- SHELF -->
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Shelf
+                        </label>
+
+                        <input
+                            type="text"
+                            name="shelf"
+                            class="form-control"
+                            value="{{ copy.shelf|default:'' }}"
+                            placeholder="Example: Shelf A">
+
+                    </div>
+
+
+                    <!-- RACK -->
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Rack
+                        </label>
+
+                        <input
+                            type="text"
+                            name="rack"
+                            class="form-control"
+                            value="{{ copy.rack|default:'' }}"
+                            placeholder="Example: Rack 1">
+
+                    </div>
+
+                </div>
+
+
+                <!-- PURCHASE -->
+
+                <div class="row">
+
+                    <!-- PURCHASE DATE -->
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Purchase Date
+                        </label>
+
+                        <input
+                            type="date"
+                            name="purchase_date"
+                            class="form-control"
+
+                            {% if copy.purchase_date %}
+
+                                value="{{ copy.purchase_date|date:'Y-m-d' }}"
+
+                            {% endif %}
+                        >
+
+                    </div>
+
+
+                    <!-- PURCHASE PRICE -->
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Purchase Price
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                ₹
+                            </span>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="purchase_price"
+                                class="form-control"
+                                value="{{ copy.purchase_price|default:'' }}"
+                                placeholder="0.00">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONDITION -->
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Condition
+                    </label>
+
+                    <select
+                        name="condition"
+                        class="form-select">
+
+
+                        <option
+                            value="Good"
+
+                            {% if not copy or copy.condition == "Good" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Good
+
+                        </option>
+
+
+                        <option
+                            value="New"
+
+                            {% if copy and copy.condition == "New" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            New
+
+                        </option>
+
+
+                        <option
+                            value="Fair"
+
+                            {% if copy and copy.condition == "Fair" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Fair
+
+                        </option>
+
+
+                        <option
+                            value="Damaged"
+
+                            {% if copy and copy.condition == "Damaged" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Damaged
+
+                        </option>
+
+
+                        <option
+                            value="Lost"
+
+                            {% if copy and copy.condition == "Lost" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Lost
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Enter any additional information..."
+                    >{{ copy.notes|default:'' }}</textarea>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        {% if copy %}
+                            Update Book Copy
+                        {% else %}
+                            Add Book Copy
+                        {% endif %}
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'book_copy_list' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- STYLE -->
+
+<style>
+
+    .card {
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 7px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.15rem rgba(13,110,253,.15);
+    }
+
+    .btn {
+        border-radius: 6px;
+        padding: 9px 18px;
+    }
+
+    code {
+        font-size: 14px;
+    }
+
+</style>
+
+{% endblock %}

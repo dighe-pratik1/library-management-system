@@ -1,0 +1,273 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Authors | LibraPro</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            color: #172033;
+        }
+
+        .container {
+            width: 92%;
+            margin: 30px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .add-button {
+            background: #1674f9;
+            color: white;
+            padding: 11px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-box button {
+            padding: 10px 18px;
+            background: #1674f9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1674f9;
+            color: white;
+            text-align: left;
+            padding: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8fbff;
+        }
+
+        .edit {
+            color: #1674f9;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .delete {
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            Authors
+        </h1>
+
+        <a href="{% url 'author_add' %}"
+           class="add-button">
+
+            + Add Author
+
+        </a>
+
+    </div>
+
+
+    <div class="search-box">
+
+        <form method="GET">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search author..."
+            >
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Name
+                </th>
+
+                <th>
+                    Country
+                </th>
+
+                <th>
+                    Website
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+                <th>
+                    Action
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+            {% for author in authors %}
+
+            <tr>
+
+                <td>
+                    {{ author.name }}
+                </td>
+
+                <td>
+                    {{ author.country|default:"-" }}
+                </td>
+
+                <td>
+
+                    {% if author.website %}
+
+                        {{ author.website }}
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    {{ author.status }}
+                </td>
+
+                <td>
+
+                    <a
+                        href="{% url 'author_edit' author.pk %}"
+                        class="edit">
+
+                        Edit
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'author_delete' author.pk %}"
+                        class="delete">
+
+                        Delete
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="empty">
+
+                    No authors found.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+
+</div>
+
+
+</body>
+
+</html>

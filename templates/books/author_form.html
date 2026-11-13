@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% if author %}
+            Edit Author
+        {% else %}
+            Add Author
+        {% endif %}
+        | LibraPro
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            width: 800px;
+            max-width: 94%;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1674f9;
+            box-shadow: 0 0 0 3px rgba(22, 116, 249, 0.1);
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .help-text {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .current-photo {
+            margin-top: 10px;
+        }
+
+        .current-photo img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        /* STATUS */
+
+        .status-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .status-box input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .status-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-title {
+            font-weight: 600;
+        }
+
+        .status-description {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .save {
+            background: #1674f9;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .save:hover {
+            background: #0d5fd3;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 12px 24px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .cancel:hover {
+            background: #d1d5db;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .save,
+            .cancel {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <h1>
+
+                {% if author %}
+                    Edit Author
+                {% else %}
+                    Add Author
+                {% endif %}
+
+            </h1>
+
+            <p>
+                {% if author %}
+                    Update the author's information below.
+                {% else %}
+                    Enter the author's information below to add a new author.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+
+            <!-- AUTHOR NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Author Name
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ author.name|default:'' }}"
+                    placeholder="Enter author name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- BIOGRAPHY -->
+
+            <div class="form-group">
+
+                <label for="biography">
+                    Biography
+                </label>
+
+                <textarea
+                    id="biography"
+                    name="biography"
+                    placeholder="Enter author biography"
+                >{{ author.biography|default:'' }}</textarea>
+
+            </div>
+
+
+            <!-- COUNTRY -->
+
+            <div class="form-group">
+
+                <label for="country">
+                    Country
+                </label>
+
+                <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value="{{ author.country|default:'' }}"
+                    placeholder="Example: India"
+                >
+
+            </div>
+
+
+            <!-- WEBSITE -->
+
+            <div class="form-group">
+
+                <label for="website">
+                    Website
+                </label>
+
+                <input
+                    type="url"
+                    id="website"
+                    name="website"
+                    value="{{ author.website|default:'' }}"
+                    placeholder="https://example.com"
+                >
+
+                <div class="help-text">
+                    Enter a valid website URL if available.
+                </div>
+
+            </div>
+
+
+            <!-- PHOTO -->
+
+            <div class="form-group">
+
+                <label for="photo">
+                    Author Photo
+                </label>
+
+                <input
+                    type="file"
+                    id="photo"
+                    name="photo"
+                    accept="image/*"
+                >
+
+                {% if author.photo %}
+
+                    <div class="current-photo">
+
+                        <p class="help-text">
+                            Current photo:
+                        </p>
+
+                        <img
+                            src="{{ author.photo.url }}"
+                            alt="{{ author.name }}"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="form-group">
+
+                <label>
+                    Author Status
+                </label>
+
+                <div class="status-box">
+
+                    <input
+                        type="checkbox"
+                        id="status"
+                        name="status"
+                        value="true"
+                        {% if not author or author.status %}checked{% endif %}
+                    >
+
+                    <div class="status-text">
+
+                        <span class="status-title">
+                            Active
+                        </span>
+
+                        <span class="status-description">
+                            Active authors can be associated with new books.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="save">
+
+                    {% if author %}
+                        Update Author
+                    {% else %}
+                        Save Author
+                    {% endif %}
+
+                </button>
+
+
+                <a
+                    href="{% url 'author_list' %}"
+                    class="cancel">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

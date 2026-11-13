@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Edit Payment</h2>
+
+    <p class="text-muted">
+        Update payment information
+    </p>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- MEMBER -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Member
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        value="{{ payment.member.first_name }} {{ payment.member.last_name }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- AMOUNT -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Payment Amount
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        value="₹{{ payment.amount }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- METHOD -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Payment Method
+                    </label>
+
+                    <select
+                        name="payment_method"
+                        class="form-select">
+
+                        {% for value, label in payment_methods %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if payment.payment_method == value %}selected{% endif %}
+                        >
+
+                            {{ label }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TRANSACTION -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Transaction ID
+                    </label>
+
+                    <input
+                        type="text"
+                        name="transaction_id"
+                        class="form-control"
+                        value="{{ payment.transaction_id }}"
+                    >
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4">{{ payment.notes }}</textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Update Payment
+
+                </button>
+
+
+                <a
+                    href="{% url 'payment_detail' payment.pk %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

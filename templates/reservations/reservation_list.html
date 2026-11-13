@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Reservations</h2>
+
+            <p class="text-muted">
+                Manage book reservations.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'reservation_add' %}"
+            class="btn btn-primary">
+
+            + New Reservation
+
+        </a>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total Reservations
+                    </small>
+
+                    <h3>
+                        {{ total_reservations }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Pending
+                    </small>
+
+                    <h3>
+                        {{ pending_count }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Ready
+                    </small>
+
+                    <h3>
+                        {{ ready_count }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Fulfilled
+                    </small>
+
+                    <h3>
+                        {{ fulfilled_count }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search member, book, ISBN, accession number..."
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-secondary">
+
+                        Search
+
+                    </button>
+
+                    {% if search %}
+
+                        <a
+                            href="{% url 'reservation_list' %}"
+                            class="btn btn-outline-secondary">
+
+                            Clear
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Member
+                            </th>
+
+                            <th>
+                                Book
+                            </th>
+
+                            <th>
+                                Copy
+                            </th>
+
+                            <th>
+                                Reservation Date
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for reservation in reservations %}
+
+                        <tr>
+
+                            <td>
+                                {{ reservation.id }}
+                            </td>
+
+
+                            <!-- MEMBER -->
+
+                            <td>
+
+                                <strong>
+                                    {{ reservation.member.first_name }}
+                                    {{ reservation.member.last_name }}
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+                                    {{ reservation.member.member_code }}
+                                </small>
+
+                            </td>
+
+
+                            <!-- BOOK -->
+
+                            <td>
+
+                                <strong>
+                                    {{ reservation.book.title }}
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+                                    ISBN:
+                                    {{ reservation.book.isbn }}
+                                </small>
+
+                            </td>
+
+
+                            <!-- COPY -->
+
+                            <td>
+
+                                {% if reservation.book_copy %}
+
+                                    {{ reservation.book_copy.accession_number }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Not assigned
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- DATE -->
+
+                            <td>
+
+                                {{ reservation.reservation_date|date:"d M Y" }}
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if reservation.status == "PENDING" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elif reservation.status == "READY" %}
+
+                                    <span class="badge bg-success">
+                                        Ready
+                                    </span>
+
+                                {% elif reservation.status == "FULFILLED" %}
+
+                                    <span class="badge bg-primary">
+                                        Fulfilled
+                                    </span>
+
+                                {% elif reservation.status == "CANCELLED" %}
+
+                                    <span class="badge bg-secondary">
+                                        Cancelled
+                                    </span>
+
+                                {% elif reservation.status == "EXPIRED" %}
+
+                                    <span class="badge bg-danger">
+                                        Expired
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <a
+                                    href="{% url 'reservation_detail' reservation.id %}"
+                                    class="btn btn-sm btn-outline-primary">
+
+                                    View
+
+                                </a>
+
+
+                                {% if reservation.status == "READY" %}
+
+                                    <a
+                                        href="{% url 'reservation_fulfill' reservation.id %}"
+                                        class="btn btn-sm btn-success">
+
+                                        Issue
+
+                                    </a>
+
+                                {% endif %}
+
+
+                                {% if reservation.status == "PENDING" or reservation.status == "READY" %}
+
+                                    <a
+                                        href="{% url 'reservation_cancel' reservation.id %}"
+                                        class="btn btn-sm btn-outline-danger">
+
+                                        Cancel
+
+                                    </a>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center py-5">
+
+                                <h5>
+                                    No reservations found
+                                </h5>
+
+                                <p class="text-muted">
+                                    Create a new reservation to get started.
+                                </p>
+
+                                <a
+                                    href="{% url 'reservation_add' %}"
+                                    class="btn btn-primary">
+
+                                    + New Reservation
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

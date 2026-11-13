@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Add Payment</h2>
+
+            <p class="text-muted">
+                Record a payment against a fine
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'payment_list' %}"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- FINE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Fine
+                    </label>
+
+                    <select
+                        name="fine"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            Select Fine
+                        </option>
+
+                        {% for fine in fines %}
+
+                        <option value="{{ fine.id }}">
+
+                            {{ fine.member.first_name }}
+                            {{ fine.member.last_name }}
+
+                            -
+
+                            {% if fine.issue_record %}
+
+                                {{ fine.issue_record.book_copy.book.title }}
+
+                            {% endif %}
+
+                            -
+
+                            Balance ₹{{ fine.balance }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- AMOUNT -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Payment Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        step="0.01"
+                        min="0.01"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PAYMENT METHOD -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Payment Method
+                    </label>
+
+                    <select
+                        name="payment_method"
+                        class="form-select"
+                        required>
+
+                        {% for value, label in payment_methods %}
+
+                        <option value="{{ value }}">
+
+                            {{ label }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TRANSACTION -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Transaction ID
+                    </label>
+
+                    <input
+                        type="text"
+                        name="transaction_id"
+                        class="form-control"
+                        placeholder="Optional for cash"
+                    >
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="4"></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    Record Payment
+
+                </button>
+
+
+                <a
+                    href="{% url 'payment_list' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

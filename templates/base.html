@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Library Management System
+        {% endblock %}
+    </title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #182230;
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid #303b4a;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 25px;
+        }
+
+        .menu-title {
+            padding: 20px 20px 8px;
+            font-size: 11px;
+            color: #8f9baa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #c8d0da;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #263445;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #263445;
+            color: white;
+        }
+
+        .sidebar a i {
+            width: 20px;
+            font-size: 17px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .search-box {
+            width: 350px;
+        }
+
+        .search-box input {
+            border-radius: 20px;
+            background: #f5f7fb;
+            border: none;
+            padding-left: 18px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid #e8ebf0;
+            height: 100%;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: #e9f2ff;
+            color: #0d6efd;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        /* =========================
+           CONTENT CARD
+        ========================= */
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8ebf0;
+            padding: 20px;
+        }
+
+        .content-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .content-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table {
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background: #f8f9fa;
+            font-size: 13px;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* =========================
+           BADGES
+        ========================= */
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-issued {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .status-returned {
+            background: #e2e3e5;
+            color: #41464b;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media(max-width: 900px) {
+
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo span,
+            .sidebar a span,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar a {
+                justify-content: center;
+                padding: 15px 5px;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .search-box {
+                width: 200px;
+            }
+        }
+
+    </style>
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<div class="sidebar">
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <i class="bi bi-book-half"></i>
+
+        <span>LibraPro</span>
+
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="menu-title">
+        Main
+    </div>
+
+
+    <a href="/">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+    </a>
+
+
+    <!-- LIBRARY -->
+
+    <div class="menu-title">
+        Library
+    </div>
+
+
+    <a href="{% url 'library_list' %}">
+        <i class="bi bi-building"></i>
+        <span>Libraries</span>
+    </a>
+
+
+    <!-- BOOKS - WORKING -->
+
+    <a href="{% url 'book_list' %}">
+        <i class="bi bi-book"></i>
+        <span>Books</span>
+    </a>
+
+
+    <!-- AUTHORS - WORKING -->
+
+    <a href="{% url 'author_list' %}">
+        <i class="bi bi-person-badge"></i>
+        <span>Authors</span>
+    </a>
+
+
+    <!-- CATEGORIES - WORKING -->
+
+    <a href="{% url 'category_list' %}">
+        <i class="bi bi-tags"></i>
+        <span>Categories</span>
+    </a>
+
+
+    <!-- MEMBERS -->
+
+    <div class="menu-title">
+        Members
+    </div>
+
+
+    <a href="{% url 'member_list' %}">
+        <i class="bi bi-people"></i>
+        <span>Members</span>
+    </a>
+
+
+    <a href="{% url 'membership_type_list' %}">
+        <i class="bi bi-card-list"></i>
+        <span>Membership Types</span>
+    </a>
+
+
+    <!-- CIRCULATION -->
+
+    <div class="menu-title">
+        Circulation
+    </div>
+
+
+    <a href="{% url 'issue_list' %}">
+        <i class="bi bi-arrow-left-right"></i>
+        <span>Issue / Return</span>
+    </a>
+
+
+    <a href="{% url 'overdue_books' %}">
+        <i class="bi bi-clock-history"></i>
+        <span>Overdue Books</span>
+    </a>
+
+
+    <a href="{% url 'reservation_list' %}">
+        <i class="bi bi-bookmark"></i>
+        <span>Reservations</span>
+    </a>
+
+
+    <!-- FINANCE -->
+
+    <div class="menu-title">
+        Finance
+    </div>
+
+
+    <a href="{% url 'fine_list' %}">
+        <i class="bi bi-cash-stack"></i>
+        <span>Fines</span>
+    </a>
+
+
+    <a href="{% url 'payment_list' %}">
+        <i class="bi bi-credit-card"></i>
+        <span>Payments</span>
+    </a>
+
+
+    <!-- MANAGEMENT -->
+
+    <div class="menu-title">
+        Management
+    </div>
+
+
+    <a href="{% url 'notification_list' %}">
+        <i class="bi bi-bell"></i>
+        <span>Notifications</span>
+    </a>
+
+
+    <a href="{% url 'reports_home' %}">
+        <i class="bi bi-bar-chart"></i>
+        <span>Reports</span>
+    </a>
+
+
+    <a href="{% url 'accounts:profile' %}">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+    </a>
+
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="main">
+
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search books, members...">
+
+        </div>
+
+
+        <div class="user-area">
+
+            <i class="bi bi-bell fs-5"></i>
+
+            <div class="user-avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <div>
+                <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                <small class="d-block text-muted">Signed in</small>
+            </div>
+            <a class="btn btn-outline-secondary btn-sm" href="{% url 'accounts:profile' %}" title="Profile"><i class="bi bi-person"></i></a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+{% block extra_js %}
+{% endblock %}
+
+
+</body>
+
+</html>

@@ -1,0 +1,572 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    .overdue-page {
+        padding: 10px 0 30px;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .page-header p {
+        margin: 7px 0 0;
+        color: #6b7280;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 22px;
+        height: 100%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .summary-icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .summary-title {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .summary-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .fine-number {
+        color: #dc2626;
+    }
+
+    .table-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .table-header {
+        padding: 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header h5 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .record-badge {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table {
+        margin: 0;
+    }
+
+    thead th {
+        background: #f8fafc;
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        padding: 15px;
+        white-space: nowrap;
+    }
+
+    tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .member-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .small-text {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .book-title {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .overdue-badge {
+        display: inline-block;
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .fine {
+        color: #dc2626;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .action-btn {
+        font-size: 12px;
+        padding: 7px 11px;
+        border-radius: 7px;
+        margin-right: 4px;
+        margin-bottom: 4px;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 65px 20px;
+    }
+
+    .empty-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+
+    .empty-box h4 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .empty-box p {
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+</style>
+
+
+<div class="container-fluid overdue-page">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="page-header">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h2>
+                    ⚠️ Overdue Books
+                </h2>
+
+                <p>
+                    View books that have passed their due date and are
+                    still not returned.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="{% url 'issue_book' %}"
+                    class="btn btn-primary"
+                >
+                    + Issue Book
+                </a>
+
+                <a
+                    href="{% url 'issue_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    📋 Issue Records
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- TOTAL OVERDUE -->
+
+        <div class="col-md-4">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    ⚠️
+                </div>
+
+                <div class="summary-title">
+                    Total Overdue Books
+                </div>
+
+                <div class="summary-number">
+                    {{ total_overdue }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL FINE -->
+
+        <div class="col-md-4">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    💰
+                </div>
+
+                <div class="summary-title">
+                    Total Pending Fine
+                </div>
+
+                <div class="summary-number fine-number">
+                    ₹{{ total_fine|default:"0.00" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TODAY -->
+
+        <div class="col-md-4">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📅
+                </div>
+
+                <div class="summary-title">
+                    Today's Date
+                </div>
+
+                <div class="summary-number">
+
+                    {{ today|date:"d M Y" }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- OVERDUE TABLE -->
+    <!-- ================================================= -->
+
+    <div class="table-card">
+
+        <div class="table-header">
+
+            <h5>
+                ⚠️ Overdue Issue Records
+            </h5>
+
+            <span class="record-badge">
+
+                {{ total_overdue }} Records
+
+            </span>
+
+        </div>
+
+
+        {% if overdue_data %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Member
+                        </th>
+
+                        <th>
+                            Book
+                        </th>
+
+                        <th>
+                            Accession No.
+                        </th>
+
+                        <th>
+                            Issue Date
+                        </th>
+
+                        <th>
+                            Due Date
+                        </th>
+
+                        <th>
+                            Overdue
+                        </th>
+
+                        <th>
+                            Fine
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for item in overdue_data %}
+
+                    {% with issue=item.issue %}
+
+                    <tr>
+
+
+                        <!-- MEMBER -->
+
+                        <td>
+
+                            <div class="member-name">
+
+                                {{ issue.member.first_name }}
+                                {{ issue.member.last_name }}
+
+                            </div>
+
+                            <div class="small-text">
+
+                                {{ issue.member.member_code }}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- BOOK -->
+
+                        <td>
+
+                            <div class="book-title">
+
+                                {{ issue.book_copy.book.title }}
+
+                            </div>
+
+                            <div class="small-text">
+
+                                ISBN:
+                                {{ issue.book_copy.book.isbn }}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ACCESSION -->
+
+                        <td>
+
+                            <strong>
+
+                                {{ issue.book_copy.accession_number }}
+
+                            </strong>
+
+                        </td>
+
+
+                        <!-- ISSUE DATE -->
+
+                        <td>
+
+                            {{ issue.issue_date|date:"d M Y" }}
+
+                        </td>
+
+
+                        <!-- DUE DATE -->
+
+                        <td>
+
+                            <strong class="text-danger">
+
+                                {{ issue.due_date|date:"d M Y" }}
+
+                            </strong>
+
+                        </td>
+
+
+                        <!-- OVERDUE DAYS -->
+
+                        <td>
+
+                            <span class="overdue-badge">
+
+                                {{ item.overdue_days }} day{{ item.overdue_days|pluralize }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- FINE -->
+
+                        <td>
+
+                            <span class="fine">
+
+                                ₹{{ item.fine }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <a
+                                href="{% url 'issue_detail' issue.pk %}"
+                                class="btn btn-outline-primary action-btn"
+                            >
+                                👁 View
+                            </a>
+
+
+                            <a
+                                href="{% url 'return_book' issue.pk %}"
+                                class="btn btn-success action-btn"
+                            >
+                                ↩ Return
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+                    {% endwith %}
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- ================================================= -->
+        <!-- NO OVERDUE BOOKS -->
+        <!-- ================================================= -->
+
+        <div class="empty-box">
+
+            <div class="empty-icon">
+                ✅
+            </div>
+
+            <h4>
+                No Overdue Books
+            </h4>
+
+            <p>
+                Great! There are currently no books past their due date.
+            </p>
+
+            <a
+                href="{% url 'issue_list' %}"
+                class="btn btn-primary"
+            >
+                View Issue Records
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="alert alert-warning mt-4">
+
+        <strong>⚠️ Overdue Information:</strong>
+
+        Fine is calculated based on the number of overdue days and
+        the member's membership type fine-per-day amount.
+
+    </div>
+
+
+</div>
+
+{% endblock %}
